@@ -1,11 +1,16 @@
 import { test, expect } from '@playwright/test';
 
-//const Baseurl ='https://admin.shopify.com/store/e2e-staging-test';
 const Baseurl ='https://accounts.shopify.com/lookup';
 
+    function getRandomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
 
-test('TC-01 Navigating to E2E Staging Test', async ({ page }) => {
+test('TC-01 Navigating to E2E Staging Test', async ({ page }) => {      
     test.setTimeout(60000);
+
+    // --------------------------- Login Page  --------------------------- //
+
     await page.goto('https://accounts.shopify.com/lookup');
     await page.locator("//input[@name='account[email]']").fill('poojaqaengg@gmail.com');
     await page.getByRole('button', { name: 'Continue with email' }).click();
@@ -24,7 +29,11 @@ test('TC-01 Navigating to E2E Staging Test', async ({ page }) => {
     await expect(moreBtn).toBeVisible();
     await moreBtn.click();
     await frame.locator('#selectSupplierType').selectOption('ssactivewear');
-    await frame.getByRole('textbox', { name: 'Supplier Name*' }).fill('S&S Canada Test');
+
+    // --------------------------- Conection Settings  --------------------------- //
+
+    const randomNumber = getRandomNumber(1, 100);
+    await frame.getByRole('textbox', { name: 'Supplier Name*' }).fill(`S&S Canada Test-${randomNumber}`);
     await frame.getByRole('textbox', { name: 'Username*' }).fill('415530');
     await frame.getByRole('textbox', { name: 'API Key*' }).fill('d8ea9d20-d8db-4095-ba86-cdfecb1545ba');
     const countryDropdown = frame.getByLabel('Country');
@@ -32,4 +41,33 @@ test('TC-01 Navigating to E2E Staging Test', async ({ page }) => {
     await countryDropdown.selectOption('Canada');
     await frame.locator('//button[@id="testCredentials"]').click();
     await expect(frame.locator('//p[text()="Test connection successful!"]')).toBeVisible();
+
+    // --------------------------- Inventory Settings  --------------------------- //
+
+    await frame.locator('//button[@id="inventory-settings"]').click();
+    await frame.locator('//div[@class="Polaris-Select"]//select[@id="PolarisSelect1"]').selectOption('Toronto');
+    await frame.locator('//div[@class="Polaris-Select"]//select[@id="PolarisSelect2"]').selectOption('Calgary');
+
+    // --------------------------- Product Settings  --------------------------- //
+
+    await frame.locator('//button[@id="product-settings"]').click();
+    await frame.locator("//div[@class='Polaris-Stack__Item']//span[contains(text(),'Add Field')]").dblclick({force:true});
+    // const supplierType = frame.locator('#selectSupplierType');
+    // await page.evaluate(() => {
+    //     window.scrollTo(0, document.body.scrollHeight);
+    //   });
+    // await supplierType.selectOption('Specs');
+    // await supplierType.selectOption('Metafield');
+    // const metafieldInput8 = frame.locator('//*[@id="metafieldKey-8"]');
+    // await metafieldInput8.fill('custome.specs');
+    // await frame.locator('#selectSupplierType').selectOption('Variant Color Swatch Image');
+    // await frame.locator('#selectSupplierType').selectOption('Variant Metafields');
+    // await frame.locator('//*[@id="metafieldKey-9"]').fill('custom.swatchImage');
+    await frame.locator("(//span[contains(text(),'Save Supplier')])[2]").click();
+    await page.reload();
+
+    // --------------------------- Validting the newly created Supplier  --------------------------- //
+
+    await expect(frame.locator(`//div[@class="Polaris-Card__Header"]//h2[text()='S&S Canada Test-${randomNumber}']`)).toBeVisible();
+    
   });
