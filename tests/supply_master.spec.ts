@@ -6,17 +6,17 @@ const Baseurl ='https://accounts.shopify.com/lookup';
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
 
-test('TC-01 Navigating to E2E Staging Test', async ({ page }) => {      
-    test.setTimeout(60000);
+
+test('TC-01 Navigating to E2E Staging Test', async ({ page }) => {   
 
     // --------------------------- Login Page  --------------------------- //
 
     await page.goto('https://accounts.shopify.com/lookup');
-    await page.locator("//input[@name='account[email]']").fill('poojaqaengg@gmail.com');
+    await page.locator("//input[@name='account[email]']").fill('enter your email');
     await page.getByRole('button', { name: 'Continue with email' }).click();
     const passwordInput = page.getByRole('textbox', { name: 'Password' });
     await expect(passwordInput).toBeVisible();
-    await passwordInput.fill('Pooja@2025');
+    await passwordInput.fill('enter your password');
     await page.getByRole('button', { name: 'Log in' }).click();
     const shopifyLogo = page.locator("//div[@class = 'ui-navbar__logo']");
     await expect(shopifyLogo).toBeVisible();
@@ -52,17 +52,16 @@ test('TC-01 Navigating to E2E Staging Test', async ({ page }) => {
 
     await frame.locator('//button[@id="product-settings"]').click();
     await frame.locator("//div[@class='Polaris-Stack__Item']//span[contains(text(),'Add Field')]").dblclick({force:true});
-    // const supplierType = frame.locator('#selectSupplierType');
-    // await page.evaluate(() => {
-    //     window.scrollTo(0, document.body.scrollHeight);
-    //   });
-    // await supplierType.selectOption('Specs');
-    // await supplierType.selectOption('Metafield');
-    // const metafieldInput8 = frame.locator('//*[@id="metafieldKey-8"]');
-    // await metafieldInput8.fill('custome.specs');
-    // await frame.locator('#selectSupplierType').selectOption('Variant Color Swatch Image');
-    // await frame.locator('#selectSupplierType').selectOption('Variant Metafields');
-    // await frame.locator('//*[@id="metafieldKey-9"]').fill('custom.swatchImage');
+    page.keyboard.press("PageDown")
+    await frame.locator('//div[@class="Polaris-Select"]//select[@id="PolarisSelect21"]').selectOption('Specs');
+    await frame.locator('//div[@class="Polaris-Select"]//select[@id="PolarisSelect22"]').selectOption('Metafield');
+    const metafieldInput8 = frame.locator('//*[@id="metafieldKey-8"]');
+    await metafieldInput8.fill('custom.specs');
+    await frame.locator('//div[@class="Polaris-Select"]//select[@id="PolarisSelect23"]').selectOption('Variant Color Swatch Image');
+    await frame.locator('//div[@class="Polaris-Select"]//select[@id="PolarisSelect24"]').selectOption('Variant Metafields');
+    await frame.locator('//div[@class="Polaris-Connected"]//input[@id="metafieldKey-9"]').fill('custom.swatchImage');
+
+    // --------------------------- Save Record  --------------------------- //
     await frame.locator("(//span[contains(text(),'Save Supplier')])[2]").click();
     await page.reload();
 
